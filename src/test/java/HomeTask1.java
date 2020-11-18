@@ -47,7 +47,7 @@ public class HomeTask1 {
         $(".subjects-auto-complete__menu-list").$(byText(subject)).click();
         $("#hobbiesWrapper").$(byText(hobby)).click();
         $("#uploadPicture").uploadFile(new File("src/test/resources/picture.png"));
-        $("#currentAddress").setValue(city);
+        $("#currentAddress").setValue(address);
         $("#state").click();
         $("#stateCity-wrapper").$(byText(state)).click();
         $("#city").click();
