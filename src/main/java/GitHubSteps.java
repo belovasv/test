@@ -31,23 +31,31 @@ public class GitHubSteps {
     }
 
     @Step("Кликаем на new issue, и заполняем issue")
-    public GitHubSteps createNewIssue(String issueTitle, String issueText) {
+    public GitHubSteps createNewIssue(String issueTitle, String issueText, String labels, String assignees) {
         $(By.linkText("New issue")).click();
         $("#issue_title").setValue(issueTitle);
         $("#issue_body").setValue(issueText);
-        $(".flex-justify-end").$("[type=submit").click();
+        $("#assignees-select-menu").click();
+        $(".select-menu-item").$(byText(assignees)).click();
+        $("#assignees-select-menu").click();
+        $("#labels-select-menu").click();
+        $(".js-filterable-issue-labels").$(byText(labels)).click();
+        $("#labels-select-menu").click();
+        $(byText("Submit new issue")).click();
         return this;
     }
 
     @Step("Проверяем название и текст issue")
-    public GitHubSteps checkNewIssue(String issueTitle, String issueText) {
+    public GitHubSteps checkNewIssue(String issueTitle, String issueText, String assignees, String labels) {
         $(".gh-header-title").shouldHave(Condition.text(issueTitle));
         $(".d-block.comment-body").shouldHave(Condition.exactText(issueText));
+        $(".js-issue-assignees").shouldHave(Condition.exactText(assignees));
+        $(".js-issue-labels").shouldHave(Condition.exactText(labels));
         return this;
     }
 
     @Step("Удаляем Issue")
-    public void deleteIssue(){
+    public void deleteIssue() {
         $(byText("Delete issue")).click();
         $(byText("Delete this issue")).click();
     }

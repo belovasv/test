@@ -7,6 +7,7 @@ import io.qameta.allure.Owner;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
@@ -20,14 +21,18 @@ public class HomeTask4 {
 
     String issueTitle = "test";
     String issueText = "bla-bla-bla";
-    String repo = "/belovasv/test";
+    String assignees = "belovasv";
+    String repo = "/" + assignees  +"/test";
+    String labels = "bug";
     Login login = new Login();
+
 
     @BeforeEach
     public void SetUp() {
         Selenide.clearBrowserCookies();
         Configuration.baseUrl = "https://github.com";
         SelenideLogger.addListener("allure", new AllureSelenide().screenshots(true));
+        Configuration.browserSize = "1920x1080";
     }
 
     @DisplayName("Селениде тест")
@@ -43,9 +48,17 @@ public class HomeTask4 {
         $(By.linkText("New issue")).click();
         $("#issue_title").setValue(issueTitle);
         $("#issue_body").setValue(issueText);
-        $(".flex-justify-end").$("[type=submit").click();
+        $("#assignees-select-menu").click();
+        $(".select-menu-item").$(byText(assignees)).click();
+        $("#assignees-select-menu").click();
+        $("#labels-select-menu").click();
+        $(".js-filterable-issue-labels").$(byText(labels)).click();
+        $("#labels-select-menu").click();
+        $(byText("Submit new issue")).click();
         $(".gh-header-title").shouldHave(Condition.text(issueTitle));
         $(".d-block.comment-body").shouldHave(Condition.exactText(issueText));
+        $(".js-issue-assignees").shouldHave(Condition.exactText(assignees));
+        $(".js-issue-labels").shouldHave(Condition.exactText(labels));
         $(byText("Delete issue")).click();
         $(byText("Delete this issue")).click();
     }
@@ -60,21 +73,29 @@ public class HomeTask4 {
             $("#password").setValue(login.getPassword());
             $("[type=submit]").click();
         });
-        step("идем по ссылке в репозиторий " + repo, (step) -> {
+        step("идем по ссылке в репозиторий ", (step) -> {
             open(repo);
         });
         step("кликаем на вкладку issue", (step) -> {
             $("[data-tab-item=issues-tab]").click();
         });
-        step("Кликаем на new issue и создаем новое Issue", (step) -> {
+        step("Кликаем на new issue и создаем новое Issue c Labels и assignees", (step) -> {
             $(By.linkText("New issue")).click();
             $("#issue_title").setValue(issueTitle);
             $("#issue_body").setValue(issueText);
-            $(".flex-justify-end").$("[type=submit").click();
+            $("#assignees-select-menu").click();
+            $(".select-menu-item").$(byText(assignees)).click();
+            $("#assignees-select-menu").click();
+            $("#labels-select-menu").click();
+            $(".js-filterable-issue-labels").$(byText(labels)).click();
+            $("#labels-select-menu").click();
+            $(byText("Submit new issue")).click();
         });
-        step("Проверяем название и текст issue", (step) -> {
+        step("Проверяем название, текст, дabels и фssignees issue", (step) -> {
             $(".gh-header-title").shouldHave(Condition.text(issueTitle));
             $(".d-block.comment-body").shouldHave(Condition.exactText(issueText));
+            $(".js-issue-assignees").shouldHave(Condition.exactText(assignees));
+            $(".js-issue-labels").shouldHave(Condition.exactText(labels));
         });
         step("Удаляем issue", (step) -> {
             $(byText("Delete issue")).click();
@@ -88,10 +109,9 @@ public class HomeTask4 {
         new GitHubSteps()
                 .login(login.getUser(), login.getPassword())
                 .goToLink(repo)
-                .clickIssue().createNewIssue(issueTitle, issueText)
-                .checkNewIssue(issueTitle, issueText)
+                .clickIssue().createNewIssue(issueTitle, issueText,assignees ,labels)
+                .checkNewIssue(issueTitle, issueText, assignees,labels)
                 .deleteIssue();
     }
-
 
 }
