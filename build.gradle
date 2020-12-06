@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'idea'
     id 'ru.vyarus.quality' version '4.4.0'
-    id "io.qameta.allure" version "2.8.1"
 }
 
 group 'org.example'
@@ -12,31 +11,20 @@ repositories {
     mavenCentral()
 }
 
-allure {
-    autoconfigure = true
-    version = '2.13.6'
-    useJUnit5 {
-        version = '2.13.6'
-    }
-}
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 
 dependencies {
-    implementation("io.qameta.allure:allure-selenide:2.13.6")
-    implementation ('com.codeborne:selenide:5.15.1')
+
     testImplementation ("org.junit.jupiter:junit-jupiter-api:5.7.0")
     testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
 }
 
 test {
     useJUnitPlatform()
 }
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
+
+
 }
 
-task demo (type: Test){
-    useJUnitPlatform{
-        includeTags 'gitHubIssue'
-    }
-}
+
